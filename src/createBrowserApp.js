@@ -103,6 +103,7 @@ export default function createBrowserApp(App) {
     }
     _dispatch = action => {
       const lastState = this.state.nav;
+      const onNavigationStateChange = this.props.onNavigationStateChange;
       const newState = App.router.getStateForAction(action, lastState);
       const dispatchEvents = () =>
         this._actionEventSubscribers.forEach(subscriber =>
@@ -123,6 +124,9 @@ export default function createBrowserApp(App) {
           !matchPathAndParams(pathAndParams, currentPathAndParams)
         ) {
           currentPathAndParams = pathAndParams;
+          if (onNavigationStateChange) {
+            onNavigationStateChange(lastState, newState, action);
+          }
           history.push(
             `/${pathAndParams.path}?${queryString.stringify(
               pathAndParams.params
